@@ -35,7 +35,7 @@ class SalesProject(models.Model):
     
 # 采购发票
 class InputInvoice(models.Model):
-    # dikouqijian=models.CharField(verbose_name='开票日期',max_length=50)
+    date=models.CharField(verbose_name='所属期',max_length=50)
     kaipiaoriqi=models.CharField(verbose_name='开票日期',max_length=50)
     title=models.CharField(verbose_name='数电票号码',max_length=50)
     jine=models.DecimalField(verbose_name='金额',max_digits=15,decimal_places=4)
@@ -50,6 +50,7 @@ class InputInvoice(models.Model):
     
  #销项发票
 class OutputInvoice(models.Model):
+    date=models.CharField(verbose_name='所属期',max_length=50)
     kaipiaoriqi=models.CharField(verbose_name='开票日期',max_length=50)
     title=models.CharField(verbose_name='数电票号码',max_length=50)
     jine=models.DecimalField(verbose_name='金额',max_digits=15,decimal_places=4)

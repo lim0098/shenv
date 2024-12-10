@@ -41,8 +41,8 @@ class InputInvoiceViewsSet(viewsets.ModelViewSet):
     # permission_classes=[IsAuthenticated]
     filter_backends = (filters.SearchFilter,
                        filters.OrderingFilter,DjangoFilterBackend,)
-    search_fields =['kaipiaoriqi']
-    filterset_fields = ['kaipiaoriqi']
+    search_fields =['date']
+    filterset_fields = ['date']
     
     def create(self, request, *args, **kwargs):
         if isinstance(request.data,list):
@@ -71,8 +71,8 @@ class OutputInvoiceViewsSet(viewsets.ModelViewSet):
     # permission_classes=[IsAuthenticated]
     filter_backends = (filters.SearchFilter,
                        filters.OrderingFilter,DjangoFilterBackend,)
-    search_fields =['kaipiaoriqi']
-    filterset_fields = ['kaipiaoriqi']
+    search_fields =['date']
+    filterset_fields = ['date']
     
     def create(self, request, *args, **kwargs):
         if isinstance(request.data,list):
