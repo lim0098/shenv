@@ -103,45 +103,47 @@ class LoginView(TokenViewBase):
         serializer = self.get_serializer(data=request.data)
         try:
             serializer.is_valid(raise_exception=True)
+        # except Exception as e:
+            # raise ValueError(f'验证失败： {e}')
+            result=serializer.validated_data
+            # 获取指定用户
+            user = User.objects.get(pk=serializer.user.id)
+            # 获取该用户的所有权限
+            permissions = user.user_permissions.select_related('content_type')
+            # 获取用户通过组获得的权限
+            group_permissions = Permission.objects.filter(group__user=user)
+            
+            # 合并用户直接赋予和通过组赋予的权限
+            all_permissions = list(set(list(permissions) + list(group_permissions)))
+            
+            # print(all_permissions)
+            # 创建一个包含内容类型名称的字典
+            content_type_names = {ct.id: ct.name for ct in ContentType.objects.all()}
+            # 序列化权限并添加内容类型名称
+            p=[]
+            # serialized_permissions = serialize('json', permissions, fields=('content_type', 'codename'))
+            serialized_permissions = serialize('json', all_permissions)
+            for permission in json.loads(serialized_permissions):
+                permission['fields']['content_type_name'] = content_type_names[permission['fields']['content_type']]
+                p.append(permission['fields'])
+            result['p']=p
+            # 获取指定用户
+            # user = User.objects.get(pk=serializer.user.id)
+            # 获取该用户的所有菜单
+            menus = user.menus.all()
+            # 获取用户通过组获得的菜单
+            role_menus = Menu.objects.filter(role__user=user)       
+            # 合并用户直接赋予和通过组赋予的菜单
+            all_menus = list(set(list(menus) + list(role_menus)))
+            # 序列化权限并添加内容类型名称
+            m=[]
+            serialized_menus = serialize('json', all_menus)
+            for menu in json.loads(serialized_menus):
+                m.append(menu['fields']['title'])
+            result['m']=m
+            print(m)
         except Exception as e:
             raise ValueError(f'验证失败： {e}')
-        result=serializer.validated_data
-        # 获取指定用户
-        user = User.objects.get(pk=serializer.user.id)
-        # 获取该用户的所有权限
-        permissions = user.user_permissions.select_related('content_type')
-        # 获取用户通过组获得的权限
-        group_permissions = Permission.objects.filter(group__user=user)
-        
-        # 合并用户直接赋予和通过组赋予的权限
-        all_permissions = list(set(list(permissions) + list(group_permissions)))
-        
-        # print(all_permissions)
-        # 创建一个包含内容类型名称的字典
-        content_type_names = {ct.id: ct.name for ct in ContentType.objects.all()}
-        # 序列化权限并添加内容类型名称
-        p=[]
-        # serialized_permissions = serialize('json', permissions, fields=('content_type', 'codename'))
-        serialized_permissions = serialize('json', all_permissions)
-        for permission in json.loads(serialized_permissions):
-            permission['fields']['content_type_name'] = content_type_names[permission['fields']['content_type']]
-            p.append(permission['fields'])
-        result['p']=p
-        # 获取指定用户
-        # user = User.objects.get(pk=serializer.user.id)
-        # 获取该用户的所有菜单
-        menus = user.menus.all()
-        # 获取用户通过组获得的菜单
-        role_menus = Menu.objects.filter(role__user=user)       
-        # 合并用户直接赋予和通过组赋予的菜单
-        all_menus = list(set(list(menus) + list(role_menus)))
-        # 序列化权限并添加内容类型名称
-        m=[]
-        serialized_menus = serialize('json', all_menus)
-        for menu in json.loads(serialized_menus):
-            m.append(menu['fields']['title'])
-        result['m']=m
-        print(m)
         return Response(result, status=status.HTTP_200_OK)
  
  

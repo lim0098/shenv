@@ -14,7 +14,7 @@ git commit -m "Initial commit"
 git remote add origin git@github.com:lim0098/shenv.git
  
 # 推送本地仓库到GitHub远程仓库
-git push -u origin master
+git push origin master
 
 # 远程仓库取到本地 . 代表当前路径
 git clone <远程仓库URL> <本地路径>
